@@ -1,5 +1,7 @@
 import Ember from 'ember';
-import { timeString } from 'ember-perf-timeline/initializers/ember-perf-timeline';
+import {
+  renderComponentTimeString, renderOutletTimeString
+} from 'ember-perf-timeline/initializers/ember-perf-timeline';
 import { module, test } from 'qunit';
 import destroyApp from '../../helpers/destroy-app';
 
@@ -15,8 +17,7 @@ module('Unit | Initializer | ember perf timeline', {
   }
 });
 
-// Replace this with your real tests.
-test('timeString', function(assert) {
+test('renderComponentTimeString', function(assert) {
   const initialRenderPayload = {
     object: '<component>',
     initialRender: true,
@@ -27,14 +28,26 @@ test('timeString', function(assert) {
   };
 
   assert.equal(
-    timeString(initialRenderPayload),
+    renderComponentTimeString(initialRenderPayload),
     '<component> (Rendering: initial)',
     'initial render string is correct'
   );
 
   assert.equal(
-    timeString(updateRenderPayload),
+    renderComponentTimeString(updateRenderPayload),
     '<component> (Rendering: update)',
     'update render string is correct'
+  );
+});
+
+test('renderOutletTimeString', function(assert) {
+  const initialRenderPayload = {
+    object: 'application:main',
+  };
+
+  assert.equal(
+    renderOutletTimeString(initialRenderPayload),
+    'application:main (Rendering: outlet)',
+    'initial render string is correct'
   );
 });

@@ -1,0 +1,10 @@
+<input type="checkbox"
+       checked={{nested}}
+       onchange={{action (mut nested) value="target.checked"}}/>
+
+{{#my-component}}
+  {{#if nested}}
+    {{#my-other-component}}
+    {{/my-other-component}}
+  {{/if}}
+{{/my-component}}

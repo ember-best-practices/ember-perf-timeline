@@ -1,14 +1,5 @@
 <a href="?_ember-perf-timeline=true">Set Query Params to view</a>
 <br>
-<input type="checkbox"
-       checked={{nested}}
-       onchange={{action (mut nested) value="target.checked"}}/>
 
-{{#my-component}}
-  {{#if nested}}
-    {{#my-other-component}}
-    {{/my-other-component}}
-  {{/if}}
-{{/my-component}}
 {{outlet}}
 

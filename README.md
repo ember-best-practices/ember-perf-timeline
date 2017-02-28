@@ -1,7 +1,11 @@
 # ember-perf-timeline
 
-Add timeline information for ember apps. Current we provide information for
-component render, although more support can be added This README outlines the
+![timeline example](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/travis.png)
+
+Add timeline information for ember apps.
+
+
+*note: Currently we provide information for component render, although more support can (and should) be added*
 
 ## Installation
 
@@ -12,7 +16,7 @@ component render, although more support can be added This README outlines the
 1. add `_ember-perf-timeline=true` to the queryString of your URL.
 2. record a timeline (timeline tab or performance tab in chrome)
 
-*note: if the queryParam is not set, the addon will not impact your apps performance, and can be left installed for production*
+*note: if the queryParam is not set, the addon will not impact your app's performance, and can be left installed for production*
 *note: if the queryParam is set, the instrumentation overhead may be a tad high for now*
 
 ## Example

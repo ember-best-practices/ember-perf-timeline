@@ -1,4 +1,4 @@
-# ember-perf-timeline
+# ember-perf-timeline [![Build Status](https://travis-ci.org/stefanpenner/ember-perf-timeline.svg?branch=master)](https://travis-ci.org/stefanpenner/ember-perf-timeline)
 
 ![timeline example](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/travis.png)
 

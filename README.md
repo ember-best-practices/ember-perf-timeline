@@ -5,7 +5,7 @@
 Add timeline information for ember apps.
 
 
-*note: Currently we provide information for component render, although more support can (and should) be added*
+*note: Currently we provide information for component and outlet render, although more support can (and should) be added*
 
 ## Installation
 

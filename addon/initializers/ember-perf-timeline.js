@@ -6,10 +6,10 @@ export function timeString(payload) {
 
 if (/[\?\&]_ember-perf-timeline=true/ig.test(self.location.search)) {
   Ember.subscribe('render.component', {
-    before(eventName, time, payload) {
+    before: function $beforeRenderComponent(eventName, time, payload) {
       console.time(timeString(payload));
     },
-    after(eventName, time, payload) {
+    after: function $afterRenderComponent(eventName, time, payload) {
       console.timeEnd(timeString(payload));
     }}
   );

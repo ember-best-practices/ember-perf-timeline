@@ -23,15 +23,17 @@ component render, although more support can be added This README outlines the
 4. click the checkbox
 5. you will see:
 
-TODO: update-and-create-render.png
+![update and create of components on render](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/update-and-create-render.png)
 
 ### What else can you do?
 
 1. you can search by the name of your component:
-TODO: timeline-search.png
+
+![timeline search](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/timeilne-search.png)
 
 2. You can search for both `$beforeRenderComponent` and `$afterRenderComponent`, to find the bounds of component renderings within the flame graph
-TODO: before-render-component-can-be-hard-to-find.png
+
+![searched keywords may be hard to find](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/before-render-component-can-be-hard-to-find.png)
 
 note: searching is limited to the visibile portion of the timeline
 

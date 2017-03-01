@@ -19,7 +19,8 @@
   },
   "files": [
     "addon",
-    "app"
+    "app",
+    "index.js"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.7"

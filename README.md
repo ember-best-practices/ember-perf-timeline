@@ -19,6 +19,12 @@ Add timeline information for ember apps.
 *note: if the queryParam is not set, the addon will not impact your app's performance, and can be left installed for production*
 *note: if the queryParam is set, the instrumentation overhead may be a tad high for now*
 
+### Containment
+
+Times for a given component, include not only its own time but also those of its children. For the folowing example, the parent component took a total of 6 ms, which included the 1.5ms of the child:
+
+![containment example](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/containment.png)
+
 ## Example
 
 1. run `ember s` in this repo

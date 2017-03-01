@@ -17,6 +17,10 @@
     "start": "ember server",
     "test": "ember try:each"
   },
+  "files": [
+    "addon",
+    "app"
+  ],
   "dependencies": {
     "ember-cli-babel": "^5.1.7"
   },

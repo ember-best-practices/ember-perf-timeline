@@ -8,7 +8,9 @@ export function renderOutletTimeString(payload) {
   return `${payload.object} (Rendering: outlet)`;
 }
 
-if (/[\?\&]_ember-perf-timeline=true/ig.test(self.location.search)) {
+let isBrowser = self !== 'undefined';
+
+if (isBrowser && /[\?\&]_ember-perf-timeline=true/ig.test(self.location.search)) {
   Ember.subscribe('render.component', {
     before: function $beforeRenderComponent(eventName, time, payload) {
       console.time(renderComponentTimeString(payload));

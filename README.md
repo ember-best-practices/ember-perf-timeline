@@ -1,5 +1,7 @@
 # ember-perf-timeline [![Build Status](https://travis-ci.org/stefanpenner/ember-perf-timeline.svg?branch=master)](https://travis-ci.org/stefanpenner/ember-perf-timeline)
 
+**Warning: Running with the profiler and instrumentation enabled will itself impede performance itself. Also be sure to test in production mode or all the dev assertions will troll performance aswell**
+
 ![timeline example](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/travis.png)
 
 Add timeline information for ember apps.

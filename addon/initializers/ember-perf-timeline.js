@@ -8,6 +8,10 @@ export function renderOutletTimeString(payload) {
   return `${payload.object} (Rendering: outlet)`;
 }
 
+export function renderGetComponentDefinitionTimeString(payload) {
+  return `${payload.object} (Rendering: getComponentDefinition)`;
+}
+
 let hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
 
 if (hasLocation && /[\?\&]_ember-perf-timeline=true/ig.test(self.location.search)) {
@@ -26,6 +30,15 @@ if (hasLocation && /[\?\&]_ember-perf-timeline=true/ig.test(self.location.search
     },
     after: function $afterRenderComponent(eventName, time, payload) {
       console.timeEnd(renderOutletTimeString(payload));
+    }}
+  );
+
+  Ember.subscribe('render.getComponentDefinition', {
+    before: function $beforeRenderComponent(eventName, time, payload) {
+      console.time(renderGetComponentDefinitionTimeString(payload));
+    },
+    after: function $afterRenderComponent(eventName, time, payload) {
+      console.timeEnd(renderGetComponentDefinitionTimeString(payload));
     }}
   );
 }

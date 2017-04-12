@@ -11,7 +11,7 @@
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": "https://github.com/ember-best-practices/ember-perf-timeline/",
   "scripts": {
     "build": "ember build",
     "start": "ember server",

@@ -1,13 +1,12 @@
-# ember-perf-timeline [![Build Status](https://travis-ci.org/stefanpenner/ember-perf-timeline.svg?branch=master)](https://travis-ci.org/stefanpenner/ember-perf-timeline)
+# ember-perf-timeline [![Build Status](https://travis-ci.org/ember-best-practices/ember-perf-timeline.svg?branch=master)](https://travis-ci.org/ember-best-practices/ember-perf-timeline)
 
-**Warning: Running with the profiler and instrumentation enabled will itself impede performance itself. Also be sure to test in production mode or all the dev assertions will troll performance aswell**
+Add performance information to Chrome's Timeline for Ember applications.
 
-![timeline example](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/travis.png)
+Currently this addon provides information for `Component` and `{{outlet}}` render, although more support can (and should) be added in the future.
 
-Add timeline information for ember apps.
+![timeline example](./assets/travis.png)
 
-
-*note: Currently we provide information for component and outlet render, although more support can (and should) be added*
+**Warning: Running with the profiler and instrumentation enabled will itself impede performance itself. Also, be sure to test in production mode or all the development mode assertions will affect performance as well.**
 
 ## Installation
 
@@ -15,39 +14,38 @@ Add timeline information for ember apps.
 
 ## Usage
 
-1. add `_ember-perf-timeline=true` to the queryString of your URL.
-2. record a timeline (timeline tab or performance tab in chrome)
+1. Add `_ember-perf-timeline=true` to the queryString of your URL.
+2. Record a timeline (using either timeline tab or performance tab in Chrome).
 
-*note: if the queryParam is not set, the addon will not impact your app's performance, and can be left installed for production*
-*note: if the queryParam is set, the instrumentation overhead may be a tad high for now*
+*Note: If the query param is not set, the addon will not impact your app's performance, and can be left installed for production. Additionally, if the query param is set, the instrumentation overhead may be non-trivial.*
 
 ### Containment
 
-Times for a given component, include not only its own time but also those of its children. For the folowing example, the parent component took a total of 6 ms, which included the 1.5ms of the child:
+Times for a given component include its own time and those of its children. For the folowing example, the parent component took a total of 6 ms, which includes the 1.5ms of the child:
 
-![containment example](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/containment.png)
+![containment example](./assets/containment.png)
 
 ## Example
 
-1. run `ember s` in this repo
-2. visit [http://localhost:4202/?_ember-perf-timeline=true](http://localhost:4202/?_ember-perf-timeline=true)
-3. open "Timeline" or "Performace" tab in the inspector
-4. click the checkbox
-5. you will see:
+1. Run `ember s` in this repo.
+2. Visit [http://localhost:4200/?_ember-perf-timeline=true](http://localhost:4200/?_ember-perf-timeline=true).
+3. Open "Timeline" or "Performace" tab in the Chrome Developer Tools.
+4. Record a timeline.
+5. You will see something like:
 
-![update and create of components on render](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/update-and-create-render.png)
+![update and create of components on render](./assets/update-and-create-render.png)
 
 ### What else can you do?
 
-1. you can search by the name of your component:
+1. You can search by the name of your component:
 
-![timeline search](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/timeilne-search.png)
+![timeline search](./assets/timeilne-search.png)
 
-2. You can search for both `$beforeRenderComponent` and `$afterRenderComponent`, to find the bounds of component renderings within the flame graph
+2. You can search for both `$beforeRenderComponent` and `$afterRenderComponent`, to find the bounds of component renderings within the flame graph:
 
 ![searched keywords may be hard to find](https://raw.githubusercontent.com/stefanpenner/ember-perf-timeline/master/assets/before-render-component-can-be-hard-to-find.png)
 
-note: searching is limited to the visibile portion of the timeline
+*Note: Searching is limited to the visibile portion of the timeline.*
 
 # Developement
 

@@ -21,7 +21,7 @@ Currently this addon provides information for `Component` and `{{outlet}}` rende
 
 ### Containment
 
-Times for a given component include its own time and those of its children. For the folowing example, the parent component took a total of 6 ms, which includes the 1.5ms of the child:
+Times for a given component include its own time and those of its children. For the following example, the parent component took a total of 6 ms, which includes the 1.5ms of the child:
 
 ![containment example](./assets/containment.png)
 

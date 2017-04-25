@@ -1,3 +1,4 @@
+/* global requirejs */
 import Ember from 'ember';
 
 export function renderComponentTimeString(payload) {
@@ -12,33 +13,70 @@ export function renderGetComponentDefinitionTimeString(payload) {
   return `${payload.object} (Rendering: getComponentDefinition)`;
 }
 
-let hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
+function startMark(label) {
+  performance.mark(`${label}-start`);
+}
 
-if (hasLocation && /[\?\&]_ember-perf-timeline=true/ig.test(self.location.search)) {
+function endMark(label) {
+  let startMark = `${label}-start`;
+  let endMark = `${label}-end`;
+  performance.mark(endMark);
+  performance.measure(label, startMark, endMark);
+}
+
+let hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
+let shouldActivatePerformanceTracing = hasLocation && /[\?\&]_ember-perf-timeline=true/ig.test(self.location.search);
+
+if (shouldActivatePerformanceTracing) {
+  let EVENT_ID = 0;
+  // performance.clearMeasures = function() {};
+
+  const TriggerMixin = Ember.Mixin.create({
+    trigger(eventName) {
+      let eventId = EVENT_ID++;
+      let label = `${this._debugContainerKey}:${eventName}`;
+      let startMark = `${eventId}-start`;
+      let endMark = `${eventId}-end`;
+      performance.mark(startMark);
+      let ret = this._super.apply(this, arguments);
+      performance.mark(endMark);
+      performance.measure(label, startMark, endMark);
+      return ret;
+    }
+  });
+
+  Ember.Component.reopen(TriggerMixin);
+  Ember.Evented.reopen(TriggerMixin);
+
+  if (requirejs.entries['ember-data/index']) {
+    const Model = requirejs('ember-data/index').default.Model;
+    Model.reopen(TriggerMixin);
+  }
+
   Ember.subscribe('render.component', {
     before: function $beforeRenderComponent(eventName, time, payload) {
-      console.time(renderComponentTimeString(payload));
+      startMark(renderComponentTimeString(payload));
     },
     after: function $afterRenderComponent(eventName, time, payload) {
-      console.timeEnd(renderComponentTimeString(payload));
+      endMark(renderComponentTimeString(payload));
     }}
   );
 
   Ember.subscribe('render.outlet', {
     before: function $beforeRenderComponent(eventName, time, payload) {
-      console.time(renderOutletTimeString(payload));
+      startMark(renderOutletTimeString(payload));
     },
     after: function $afterRenderComponent(eventName, time, payload) {
-      console.timeEnd(renderOutletTimeString(payload));
+      endMark(renderOutletTimeString(payload));
     }}
   );
 
   Ember.subscribe('render.getComponentDefinition', {
     before: function $beforeRenderComponent(eventName, time, payload) {
-      console.time(renderGetComponentDefinitionTimeString(payload));
+      startMark(renderGetComponentDefinitionTimeString(payload));
     },
     after: function $afterRenderComponent(eventName, time, payload) {
-      console.timeEnd(renderGetComponentDefinitionTimeString(payload));
+      endMark(renderGetComponentDefinitionTimeString(payload));
     }}
   );
 }

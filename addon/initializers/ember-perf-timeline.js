@@ -51,6 +51,7 @@ if (shouldActivatePerformanceTracing) {
   // prevent folks from force-flushing this queue when we are active
   if (HAS_PERFORMANCE_API) {
     performance.clearMeasures = function() {};
+    performance.clearMarks = function() {};
   }
 
   const TriggerMixin = Ember.Mixin.create({

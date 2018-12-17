@@ -1,5 +1,8 @@
 /* global requirejs */
 import Ember from 'ember';
+import ENV from '../../config/environment';
+
+const IS_DEVELOPMENT = (ENV.environment === 'development');
 
 export function renderComponentTimeString(payload) {
   return `${payload.object} (Rendering: ${payload.initialRender ? 'initial' : 'update' })`;
@@ -43,7 +46,7 @@ function endMark(label) {
 let hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
 let shouldActivatePerformanceTracing = hasLocation && /[\?\&]_ember-perf-timeline=true/ig.test(self.location.search);
 
-if (shouldActivatePerformanceTracing) {
+if (shouldActivatePerformanceTracing || IS_DEVELOPMENT) {
   HAS_PERFORMANCE_API = detectPerformanceApi();
 
   let EVENT_ID = 0;

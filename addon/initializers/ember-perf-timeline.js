@@ -1,8 +1,8 @@
 /* global requirejs */
 import Ember from 'ember';
-import ENV from '../../config/environment';
+import ENV_CONFIG from 'ember-get-config';
 
-const IS_DEVELOPMENT = (ENV.environment === 'development');
+const IS_DEVELOPMENT = (ENV_CONFIG.environment === 'development');
 
 export function renderComponentTimeString(payload) {
   return `${payload.object} (Rendering: ${payload.initialRender ? 'initial' : 'update' })`;

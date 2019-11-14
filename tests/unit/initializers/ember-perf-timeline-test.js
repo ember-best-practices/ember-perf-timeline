@@ -1,4 +1,6 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
+import Application from '@ember/application';
+
 import {
   renderComponentTimeString, renderOutletTimeString
 } from 'ember-perf-timeline/initializers/ember-perf-timeline';
@@ -7,8 +9,8 @@ import destroyApp from '../../helpers/destroy-app';
 
 module('Unit | Initializer | ember perf timeline', {
   beforeEach() {
-    Ember.run(() => {
-      this.application = Ember.Application.create();
+    run(() => {
+      this.application = Application.create();
       this.application.deferReadiness();
     });
   },

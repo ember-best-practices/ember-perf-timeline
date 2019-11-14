@@ -1,4 +1,7 @@
-/* global requirejs */
+import require from 'require';
+import Mixin from '@ember/object/mixin';
+import Component from '@ember/component';
+import Evented from '@ember/object/evented';
 import Ember from 'ember';
 
 export function renderComponentTimeString(payload) {
@@ -25,6 +28,7 @@ function startMark(label) {
   if (HAS_PERFORMANCE_API) {
     performance.mark(`${label}-start`);
   } else {
+  // eslint-disable-next-line
     console.time(label);
   }
 }
@@ -36,12 +40,13 @@ function endMark(label) {
     performance.mark(endMark);
     performance.measure(label, startMark, endMark);
   } else {
+    // eslint-disable-next-line
     console.timeEnd(label);
   }
 }
 
 let hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
-let shouldActivatePerformanceTracing = hasLocation && /[\?\&]_ember-perf-timeline=true/ig.test(self.location.search);
+let shouldActivatePerformanceTracing = hasLocation && /[?&]_ember-perf-timeline=true/ig.test(self.location.search);
 
 if (shouldActivatePerformanceTracing) {
   HAS_PERFORMANCE_API = detectPerformanceApi();
@@ -54,7 +59,8 @@ if (shouldActivatePerformanceTracing) {
     performance.clearMarks = function() {};
   }
 
-  const TriggerMixin = Ember.Mixin.create({
+  /* eslint-disable ember/no-new-mixins  */
+  const TriggerMixin = Mixin.create({
     trigger(eventName) {
       let eventId = EVENT_ID++;
       let label = `${this.toString()}:${eventName}:${eventId}`;
@@ -64,12 +70,14 @@ if (shouldActivatePerformanceTracing) {
       return ret;
     }
   });
+  /* eslint-enable ember/no-new-mixins  */
 
-  Ember.Component.reopen(TriggerMixin);
-  Ember.Evented.reopen(TriggerMixin);
+  Component.reopen(TriggerMixin);
+  Evented.reopen(TriggerMixin);
 
+  /* global requirejs*/
   if (requirejs.entries['ember-data/index']) {
-    const Model = requirejs('ember-data/index').default.Model;
+    const Model = require('ember-data/index').default.Model;
     Model.reopen(TriggerMixin);
   }
 

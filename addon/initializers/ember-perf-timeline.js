@@ -5,18 +5,19 @@ import Evented from '@ember/object/evented';
 import Ember from 'ember';
 
 export function renderComponentTimeString(payload) {
-  return `${payload.object} (Rendering: ${payload.initialRender ? 'initial' : 'update' })`;
+  return `EmberRender:${payload.object} (Rendering ${payload.initialRender ? 'initial' : 'update' })`;
 }
 
 export function renderOutletTimeString(payload) {
-  return `${payload.object} (Rendering: outlet)`;
+  return `EmberRender:${payload.object} (Rendering outlet)`;
 }
 
 export function renderGetComponentDefinitionTimeString(payload) {
-  return `${payload.object} (Rendering: getComponentDefinition)`;
+  return `EmberRender:${payload.object} (Rendering getComponentDefinition)`;
 }
 
 let HAS_PERFORMANCE_API = false;
+const hasPerformanceObserver = typeof PerformanceObserver !== 'undefined';
 
 function detectPerformanceApi() {
   return typeof performance !== 'undefined' &&
@@ -33,12 +34,38 @@ function startMark(label) {
   }
 }
 
+
+if (hasPerformanceObserver) {
+  const marks = Object.create(null);
+  const NAME_REGEXP = /(EmberRender:.*)-(start|end)$/;
+
+  new PerformanceObserver(list => {
+    for (let { name } of list.getEntries()) {
+      const matched = name.match(NAME_REGEXP);
+      if (matched) {
+        const [, label, startOrStop] = matched;
+        const current = marks[label] = marks[label] || {
+          start: false,
+          end: false
+        };
+        current[startOrStop] = true
+        if (current.start && current.end) {
+          performance.measure(label, label + '-start', label + '-end');
+          delete marks[label];
+        }
+      }
+    }
+  }).observe({ entryTypes: ['mark']});
+}
+
 function endMark(label) {
   if (HAS_PERFORMANCE_API) {
     let startMark = `${label}-start`;
     let endMark = `${label}-end`;
     performance.mark(endMark);
-    performance.measure(label, startMark, endMark);
+    if (hasPerformanceObserver === false) {
+      performance.measure(label, startMark, endMark);
+    }
   } else {
     // eslint-disable-next-line
     console.timeEnd(label);
@@ -63,7 +90,7 @@ if (shouldActivatePerformanceTracing) {
   const TriggerMixin = Mixin.create({
     trigger(eventName) {
       let eventId = EVENT_ID++;
-      let label = `${this.toString()}:${eventName}:${eventId}`;
+      let label = `EmberRender:${this.toString()}.${eventName}.${eventId}`;
       startMark(label);
       let ret = this._super.apply(this, arguments);
       endMark(label);

@@ -31,13 +31,13 @@ test('renderComponentTimeString', function(assert) {
 
   assert.equal(
     renderComponentTimeString(initialRenderPayload),
-    '<component> (Rendering: initial)',
+    'EmberRender:<component> (Rendering initial)',
     'initial render string is correct'
   );
 
   assert.equal(
     renderComponentTimeString(updateRenderPayload),
-    '<component> (Rendering: update)',
+    'EmberRender:<component> (Rendering update)',
     'update render string is correct'
   );
 });
@@ -49,7 +49,7 @@ test('renderOutletTimeString', function(assert) {
 
   assert.equal(
     renderOutletTimeString(initialRenderPayload),
-    'application:main (Rendering: outlet)',
+    'EmberRender:application:main (Rendering outlet)',
     'initial render string is correct'
   );
 });

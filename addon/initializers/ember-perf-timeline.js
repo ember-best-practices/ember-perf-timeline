@@ -1,8 +1,9 @@
-import require from 'require';
+import require, { has } from 'require';
 import Mixin from '@ember/object/mixin';
 import Component from '@ember/component';
 import Evented from '@ember/object/evented';
 import Ember from 'ember';
+import { configEnv } from 'ember-env-macros';
 
 export function renderComponentTimeString(payload) {
   return `EmberRender:${payload.object} (Rendering ${payload.initialRender ? 'initial' : 'update' })`;
@@ -16,26 +17,28 @@ export function renderGetComponentDefinitionTimeString(payload) {
   return `EmberRender:${payload.object} (Rendering getComponentDefinition)`;
 }
 
-let HAS_PERFORMANCE_API = false;
-const hasPerformanceObserver = typeof PerformanceObserver !== 'undefined';
-
-function detectPerformanceApi() {
-  return typeof performance !== 'undefined' &&
-    typeof performance.mark === 'function' &&
-    typeof performance.measure === 'function';
+export function instrumentationsFromSearch(search) {
+  const [searchParam] = search.substring(1).split('&').filter(x => x.indexOf('_ember-perf-timeline') > -1);
+  const [,instrumentations] = searchParam && searchParam.split('=') || [];
+  return instrumentations || '';
 }
+
+const HAS_PERFORMANCE_OBSERVER = typeof PerformanceObserver !== 'undefined';
+
+const HAS_PERFORMANCE_API = typeof performance !== 'undefined' &&
+  typeof performance.mark === 'function' &&
+  typeof performance.measure === 'function';
 
 function startMark(label) {
   if (HAS_PERFORMANCE_API) {
     performance.mark(`${label}-start`);
   } else {
-  // eslint-disable-next-line
+    // eslint-disable-next-line
     console.time(label);
   }
 }
 
-
-if (hasPerformanceObserver) {
+if (HAS_PERFORMANCE_OBSERVER) {
   const marks = Object.create(null);
   const NAME_REGEXP = /(EmberRender:.*)-(start|end)$/;
 
@@ -63,7 +66,7 @@ function endMark(label) {
     let startMark = `${label}-start`;
     let endMark = `${label}-end`;
     performance.mark(endMark);
-    if (hasPerformanceObserver === false) {
+    if (HAS_PERFORMANCE_OBSERVER === false) {
       performance.measure(label, startMark, endMark);
     }
   } else {
@@ -72,11 +75,16 @@ function endMark(label) {
   }
 }
 
-let hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
-let shouldActivatePerformanceTracing = hasLocation && /[?&]_ember-perf-timeline=true/ig.test(self.location.search);
+const hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
 
-if (shouldActivatePerformanceTracing) {
-  HAS_PERFORMANCE_API = detectPerformanceApi();
+if (hasLocation) {
+
+  const instrumentations = instrumentationsFromSearch(self.location.search);
+  const ENABLE_ALL = instrumentations === 'true';
+
+  const RENDER_COMPONENT = configEnv('emberPerfTimeline.renderComponent') || ENABLE_ALL || instrumentations.indexOf('render.component') > -1;
+  const RENDER_OUTLET = configEnv('emberPerfTimeline.renderOutlet') || ENABLE_ALL || instrumentations.indexOf('render.outlet') > -1;
+  const RENDER_GET_COMPONENT_DEFINITION = configEnv('emberPerfTimeline.renderGetComponentDefinition') || ENABLE_ALL || instrumentations.indexOf('render.getComponentDefinition') > -1;
 
   let EVENT_ID = 0;
 
@@ -97,43 +105,48 @@ if (shouldActivatePerformanceTracing) {
       return ret;
     }
   });
-  /* eslint-enable ember/no-new-mixins  */
 
+  /* eslint-enable ember/no-new-mixins  */
   Component.reopen(TriggerMixin);
   Evented.reopen(TriggerMixin);
 
-  /* global requirejs*/
-  if (requirejs.entries['ember-data/index']) {
+  if (has('ember-data/index')) {
     const Model = require('ember-data/index').default.Model;
     Model.reopen(TriggerMixin);
   }
 
-  Ember.subscribe('render.component', {
-    before: function $beforeRenderComponent(eventName, time, payload) {
-      startMark(renderComponentTimeString(payload));
-    },
-    after: function $afterRenderComponent(eventName, time, payload) {
-      endMark(renderComponentTimeString(payload));
-    }}
-  );
+  if (RENDER_COMPONENT) {
+    Ember.subscribe('render.component', {
+      before: function $beforeRenderComponent(eventName, time, payload) {
+        startMark(renderComponentTimeString(payload));
+      },
+      after: function $afterRenderComponent(eventName, time, payload) {
+        endMark(renderComponentTimeString(payload));
+      }}
+    );
+  }
 
-  Ember.subscribe('render.outlet', {
-    before: function $beforeRenderComponent(eventName, time, payload) {
-      startMark(renderOutletTimeString(payload));
-    },
-    after: function $afterRenderComponent(eventName, time, payload) {
-      endMark(renderOutletTimeString(payload));
-    }}
-  );
+  if (RENDER_OUTLET) {
+    Ember.subscribe('render.outlet', {
+      before: function $beforeRenderComponent(eventName, time, payload) {
+        startMark(renderOutletTimeString(payload));
+      },
+      after: function $afterRenderComponent(eventName, time, payload) {
+        endMark(renderOutletTimeString(payload));
+      }}
+    );
+  }
 
-  Ember.subscribe('render.getComponentDefinition', {
-    before: function $beforeRenderComponent(eventName, time, payload) {
-      startMark(renderGetComponentDefinitionTimeString(payload));
-    },
-    after: function $afterRenderComponent(eventName, time, payload) {
-      endMark(renderGetComponentDefinitionTimeString(payload));
-    }}
-  );
+  if (RENDER_GET_COMPONENT_DEFINITION) {
+    Ember.subscribe('render.getComponentDefinition', {
+      before: function $beforeRenderComponent(eventName, time, payload) {
+        startMark(renderGetComponentDefinitionTimeString(payload));
+      },
+      after: function $afterRenderComponent(eventName, time, payload) {
+        endMark(renderGetComponentDefinitionTimeString(payload));
+      }}
+    );
+  }
 }
 
 export default {

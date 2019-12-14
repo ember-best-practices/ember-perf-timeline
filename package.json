@@ -26,7 +26,8 @@
     "index.js"
   ],
   "dependencies": {
-    "ember-cli-babel": "^7.11.1"
+    "ember-cli-babel": "^7.11.1",
+    "ember-env-macros": "^0.3.1"
   },
   "devDependencies": {
     "@ember/optional-features": "^1.0.0",

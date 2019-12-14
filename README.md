@@ -19,6 +19,35 @@ Currently this addon provides information for `Component` and `{{outlet}}` rende
 
 *Note: If the query param is not set, the addon will not impact your app's performance, and can be left installed for production. Additionally, if the query param is set, the instrumentation overhead may be non-trivial.*
 
+### Configuration
+
+The `_ember-perf-timeline` query param can be either `true` or a `,` separated list.
+For example, `?_ember-perf-timeline=render.component,render.outlet` will enable instrumentation for `render.component` and `render.outlet` but ignoring other available instrumentations. `?_ember-perf-timeline=true` will enable all available instrumentations.
+
+You can also configure your app's environment to always enable instrumentations in development mode.
+This can prevent route transitions clearing the queryParam.
+
+```js
+module.exports = function(environment) {
+  let ENV = {
+    // ...
+  };
+
+  if (environment === 'development') {
+    ENV.emberPerfTimeline = {
+      renderComponent: true,
+      renderOutlet: true,
+      renderGetComponentDefinition: true
+    }
+  }
+
+  if (environment === 'production') {
+  }
+
+  return ENV;
+};
+```
+
 ### Containment
 
 Times for a given component include its own time and those of its children. For the following example, the parent component took a total of 6 ms, which includes the 1.5ms of the child:

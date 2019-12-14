@@ -6,7 +6,9 @@ import Ember from 'ember';
 import { configEnv } from 'ember-env-macros';
 
 export function renderComponentTimeString(payload) {
-  return `EmberRender:${payload.object} (Rendering ${payload.initialRender ? 'initial' : 'update' })`;
+  return `EmberRender:${payload.object} (Rendering ${
+    payload.initialRender ? 'initial' : 'update'
+  })`;
 }
 
 export function renderOutletTimeString(payload) {
@@ -18,14 +20,18 @@ export function renderGetComponentDefinitionTimeString(payload) {
 }
 
 export function instrumentationsFromSearch(search) {
-  const [searchParam] = search.substring(1).split('&').filter(x => x.indexOf('_ember-perf-timeline') > -1);
-  const [,instrumentations] = searchParam && searchParam.split('=') || [];
+  const [searchParam] = search
+    .substring(1)
+    .split('&')
+    .filter(x => x.indexOf('_ember-perf-timeline') > -1);
+  const [, instrumentations] = (searchParam && searchParam.split('=')) || [];
   return instrumentations || '';
 }
 
 const HAS_PERFORMANCE_OBSERVER = typeof PerformanceObserver !== 'undefined';
 
-const HAS_PERFORMANCE_API = typeof performance !== 'undefined' &&
+const HAS_PERFORMANCE_API =
+  typeof performance !== 'undefined' &&
   typeof performance.mark === 'function' &&
   typeof performance.measure === 'function';
 
@@ -47,18 +53,18 @@ if (HAS_PERFORMANCE_OBSERVER) {
       const matched = name.match(NAME_REGEXP);
       if (matched) {
         const [, label, startOrStop] = matched;
-        const current = marks[label] = marks[label] || {
+        const current = (marks[label] = marks[label] || {
           start: false,
-          end: false
-        };
-        current[startOrStop] = true
+          end: false,
+        });
+        current[startOrStop] = true;
         if (current.start && current.end) {
           performance.measure(label, label + '-start', label + '-end');
           delete marks[label];
         }
       }
     }
-  }).observe({ entryTypes: ['mark']});
+  }).observe({ entryTypes: ['mark'] });
 }
 
 function endMark(label) {
@@ -75,16 +81,25 @@ function endMark(label) {
   }
 }
 
-const hasLocation = typeof self !== 'undefined' && typeof self.location === 'object';
+const hasLocation =
+  typeof self !== 'undefined' && typeof self.location === 'object';
 
 if (hasLocation) {
-
   const instrumentations = instrumentationsFromSearch(self.location.search);
   const ENABLE_ALL = instrumentations === 'true';
 
-  const RENDER_COMPONENT = configEnv('emberPerfTimeline.renderComponent') || ENABLE_ALL || instrumentations.indexOf('render.component') > -1;
-  const RENDER_OUTLET = configEnv('emberPerfTimeline.renderOutlet') || ENABLE_ALL || instrumentations.indexOf('render.outlet') > -1;
-  const RENDER_GET_COMPONENT_DEFINITION = configEnv('emberPerfTimeline.renderGetComponentDefinition') || ENABLE_ALL || instrumentations.indexOf('render.getComponentDefinition') > -1;
+  const RENDER_COMPONENT =
+    configEnv('emberPerfTimeline.renderComponent') ||
+    ENABLE_ALL ||
+    instrumentations.indexOf('render.component') > -1;
+  const RENDER_OUTLET =
+    configEnv('emberPerfTimeline.renderOutlet') ||
+    ENABLE_ALL ||
+    instrumentations.indexOf('render.outlet') > -1;
+  const RENDER_GET_COMPONENT_DEFINITION =
+    configEnv('emberPerfTimeline.renderGetComponentDefinition') ||
+    ENABLE_ALL ||
+    instrumentations.indexOf('render.getComponentDefinition') > -1;
 
   let EVENT_ID = 0;
 
@@ -103,7 +118,7 @@ if (hasLocation) {
       let ret = this._super.apply(this, arguments);
       endMark(label);
       return ret;
-    }
+    },
   });
 
   /* eslint-enable ember/no-new-mixins  */
@@ -122,8 +137,8 @@ if (hasLocation) {
       },
       after: function $afterRenderComponent(eventName, time, payload) {
         endMark(renderComponentTimeString(payload));
-      }}
-    );
+      },
+    });
   }
 
   if (RENDER_OUTLET) {
@@ -133,8 +148,8 @@ if (hasLocation) {
       },
       after: function $afterRenderComponent(eventName, time, payload) {
         endMark(renderOutletTimeString(payload));
-      }}
-    );
+      },
+    });
   }
 
   if (RENDER_GET_COMPONENT_DEFINITION) {
@@ -144,12 +159,12 @@ if (hasLocation) {
       },
       after: function $afterRenderComponent(eventName, time, payload) {
         endMark(renderGetComponentDefinitionTimeString(payload));
-      }}
-    );
+      },
+    });
   }
 }
 
 export default {
   name: 'ember-perf-timeline',
-  initialize() { }
+  initialize() {},
 };

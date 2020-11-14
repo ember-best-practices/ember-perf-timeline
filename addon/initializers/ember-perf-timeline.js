@@ -83,9 +83,9 @@ function endMark(label) {
 
 const hasLocation =
   typeof self !== 'undefined' && typeof self.location === 'object';
+const instrumentations = hasLocation && instrumentationsFromSearch(self.location.search);
 
-if (hasLocation) {
-  const instrumentations = instrumentationsFromSearch(self.location.search);
+if (instrumentations) {
   const ENABLE_ALL = instrumentations === 'true';
 
   const RENDER_COMPONENT =

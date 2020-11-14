@@ -2,7 +2,7 @@ import {
   instrumentationsFromSearch,
   renderComponentTimeString,
   renderOutletTimeString,
-} from 'ember-perf-timeline/initializers/ember-perf-timeline';
+} from 'ember-perf-timeline';
 import { module, test } from 'qunit';
 
 module('Unit | Initializer | ember perf timeline', function() {

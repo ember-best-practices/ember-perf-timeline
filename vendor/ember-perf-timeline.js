@@ -163,8 +163,3 @@ if (hasLocation) {
     });
   }
 }
-
-export default {
-  name: 'ember-perf-timeline',
-  initialize() {},
-};
